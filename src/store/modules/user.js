@@ -2,17 +2,20 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 import { request } from "@/utils/index";
+import { setToken as _setToken, getToken, removeToken } from "@/utils";
 
 const userStore = createSlice({
   name: "user",
   //数据状态
   initialState: {
-    token: "",
+    token: getToken() || "",
   },
   //同步的修改方法
   reducers: {
     setToken(state, action) {
-      state.token = action.payLoad;
+      state.token = action.payload;
+      //存入本地存储localStorage
+      _setToken(action.payload);
     },
   },
 });
@@ -31,7 +34,6 @@ const fetchLogin = (LoginForm) => {
   return async (dispath) => {
     //1.发送异步请求
     const res = await request.post("/authorizations", LoginForm);
-    console.log(res, "ress");
     //2.提交同步action进行token存入
     dispath(setToken(res.data.token));
   };
