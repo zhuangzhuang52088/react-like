@@ -14,12 +14,22 @@ import { Table, Tag, Space } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/error.png";
 import { useChannel } from "@/hooks/useChannel";
+import { useEffect, useState } from "react";
+
+import { getArticleListAPI } from "@/apis/article";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const Article = () => {
   const { channelList } = useChannel();
+
+  //通过枚举获取状态
+  const status = {
+    1: <Tag color="warning">待审核</Tag>,
+    2: <Tag color="success">审核通过</Tag>,
+  };
+
   // 准备列数据
   const columns = [
     {
@@ -40,7 +50,20 @@ const Article = () => {
     {
       title: "状态",
       dataIndex: "status",
-      render: (data) => <Tag color="green">审核通过</Tag>,
+      //data - 后端返回的status状态数据
+      //data === 1  => 待审核
+      //data === 2  => 审核通过
+
+      //1.通过三元运算符判断状态
+      /* render: (data) =>
+        data === 1 ? (
+          <Tag color="warning">待审核</Tag>
+        ) : (
+          <Tag color="success">审核通过</Tag>
+        ), */
+
+      //2.通过枚举来判断状态
+      render: (data) => status[data],
     },
     {
       title: "发布时间",
@@ -90,6 +113,19 @@ const Article = () => {
       title: "wkwebview离线化加载h5资源解决方案",
     },
   ];
+
+  //获取文章列表
+  const [list, setList] = useState([]);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    async function getList() {
+      const res = await getArticleListAPI();
+      setList(res.data.results);
+      setCount(res.data.total_count);
+    }
+    getList();
+  }, []);
   return (
     <div>
       <Card
@@ -139,8 +175,8 @@ const Article = () => {
         </Form>
       </Card>
       {/* 表格区域 */}
-      <Card title={`根据筛选条件共查询到 count 条结果：`}>
-        <Table rowKey="id" columns={columns} dataSource={data} />
+      <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
+        <Table rowKey="id" columns={columns} dataSource={list} />
       </Card>
     </div>
   );
