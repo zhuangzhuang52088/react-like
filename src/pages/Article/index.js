@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   Breadcrumb,
@@ -22,6 +22,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const Article = () => {
+  const navigate = useNavigate();
   const { channelList } = useChannel();
 
   //通过枚举获取状态
@@ -86,12 +87,16 @@ const Article = () => {
       render: (data) => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<EditOutlined />}
+              onClick={() => navigate(`/publish?id=${data.id}`)}
+            />
             <Popconfirm
               title="删除文章"
               description="确认要删除当前文章吗?"
               onConfirm={() => confirm(data)}
-              onCancel={cancel}
               okText="确定"
               cancelText="取消"
             >
@@ -178,10 +183,6 @@ const Article = () => {
       ...reqData,
     });
     message.success("删除成功");
-  };
-  const cancel = (data) => {
-    console.log(data);
-    message.error(data, "Click on No");
   };
 
   return (
