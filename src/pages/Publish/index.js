@@ -13,7 +13,7 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./index.scss";
-import { createAricleApi } from "@/apis/article";
+import { createAricleAPI } from "@/apis/article";
 
 // 引入富文本编辑器
 import ReactQuill from "react-quill";
@@ -48,7 +48,7 @@ const Publish = () => {
     };
 
     //调用接口提交
-    createAricleApi(reqData);
+    createAricleAPI(reqData);
   };
 
   //上传回调

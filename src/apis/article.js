@@ -10,7 +10,7 @@ export function getChannelAPI() {
 }
 
 //2.提交文章表单
-export function createAricleApi(formData) {
+export function createAricleAPI(formData) {
   return request({
     url: "/mp/articles?draft=false",
     method: "POST",
@@ -24,5 +24,13 @@ export function getArticleListAPI(params) {
     url: "/mp/articles",
     method: "GET",
     params,
+  });
+}
+
+//删除文章
+export function delAricleAPI(id) {
+  return request({
+    url: `/mp/articles/${id}`,
+    method: "DELETE",
   });
 }

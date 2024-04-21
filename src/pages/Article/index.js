@@ -10,13 +10,13 @@ import {
 } from "antd";
 import locale from "antd/es/date-picker/locale/zh_CN"; // 引入中文包
 
-import { Table, Tag, Space } from "antd";
+import { Table, Tag, Space, Popconfirm, message } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/error.png";
 import { useChannel } from "@/hooks/useChannel";
 import { useEffect, useState } from "react";
 
-import { getArticleListAPI } from "@/apis/article";
+import { getArticleListAPI, delAricleAPI } from "@/apis/article";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -87,12 +87,21 @@ const Article = () => {
         return (
           <Space size="middle">
             <Button type="primary" shape="circle" icon={<EditOutlined />} />
-            <Button
-              type="primary"
-              danger
-              shape="circle"
-              icon={<DeleteOutlined />}
-            />
+            <Popconfirm
+              title="删除文章"
+              description="确认要删除当前文章吗?"
+              onConfirm={() => confirm(data)}
+              onCancel={cancel}
+              okText="确定"
+              cancelText="取消"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
           </Space>
         );
       },
@@ -159,6 +168,20 @@ const Article = () => {
       ...reqData,
       page,
     });
+  };
+
+  //删除功能
+  const confirm = async (data) => {
+    await delAricleAPI(data.id);
+    //重新渲染
+    setReqData({
+      ...reqData,
+    });
+    message.success("删除成功");
+  };
+  const cancel = (data) => {
+    console.log(data);
+    message.error(data, "Click on No");
   };
 
   return (
