@@ -11,14 +11,14 @@ import {
   message,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "./index.scss";
-import { createAricleAPI } from "@/apis/article";
+import { createAricleAPI, getArticleByIdAPI } from "@/apis/article";
 
 // 引入富文本编辑器
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useChannel } from "@/hooks/useChannel"; //频道列表
 
 const { Option } = Select;
@@ -60,9 +60,24 @@ const Publish = () => {
   //切换封面类型
   const [imageType, setimageType] = useState(0);
   const onTypeChange = (e) => {
-    console.log(e.target.value, "切换了");
     setimageType(e.target.value);
   };
+
+  //编辑页回填数据
+  const [searchParams] = useSearchParams();
+  const articleId = searchParams.get("id");
+  //获取实例
+  const [form] = Form.useForm();
+  useEffect(() => {
+    //通过id获取数据
+    async function getArticleDetail() {
+      const res = await getArticleByIdAPI(articleId);
+      form.setFieldsValue(res.data);
+    }
+    getArticleDetail();
+
+    //2调用实例方法 完成回填
+  }, [articleId, form]);
 
   return (
     <div className="publish">
@@ -81,6 +96,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onfinish}
+          form={form}
         >
           <Form.Item
             label="标题"
