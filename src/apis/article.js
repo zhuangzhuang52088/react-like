@@ -42,3 +42,12 @@ export function getArticleByIdAPI(id) {
     method: "GET",
   });
 }
+
+//更新文章
+export function updateAricleAPI(data) {
+  return request({
+    url: `/mp/articles/${data.id}?draft=false`,
+    method: "PUT",
+    data,
+  });
+}

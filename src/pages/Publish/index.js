@@ -13,7 +13,11 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 import { Link, useSearchParams } from "react-router-dom";
 import "./index.scss";
-import { createAricleAPI, getArticleByIdAPI } from "@/apis/article";
+import {
+  createAricleAPI,
+  getArticleByIdAPI,
+  updateAricleAPI,
+} from "@/apis/article";
 
 // 引入富文本编辑器
 import ReactQuill from "react-quill";
@@ -43,12 +47,28 @@ const Publish = () => {
       channel_id,
       cover: {
         type: imageType, //封面Type 0-无图 1-1张图 3-3张图
-        images: imageList.map((item) => item.response.data.url), //图片地址数组
+        //这里的url只能在新增里用 编辑要另外写逻辑
+        images: imageList.map((item) => {
+          if (item.response) {
+            return item.response.data.url; //新增时返回的图片地址
+          } else {
+            return item.url; //编辑时返回的图片地址
+          }
+        }), //图片地址数组
       },
     };
 
     //调用接口提交
-    createAricleAPI(reqData);
+    //处理不同的接口 新增和编辑
+    if (articleId) {
+      reqData.id = articleId;
+      //编辑
+      updateAricleAPI({
+        ...reqData,
+        id: articleId,
+      }); //编辑接口
+    }
+    createAricleAPI(reqData); //新增接口
   };
 
   //上传回调
