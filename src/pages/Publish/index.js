@@ -85,7 +85,11 @@ const Publish = () => {
       //显示图片 {url:url}
       setImageList(cover.images.map((url) => ({ url })));
     }
-    getArticleDetail();
+
+    //只有了id才调用
+    if (articleId) {
+      getArticleDetail();
+    }
 
     //2调用实例方法 完成回填
   }, [articleId, form]);
@@ -97,7 +101,7 @@ const Publish = () => {
           <Breadcrumb
             items={[
               { title: <Link to={"/"}>首页</Link> },
-              { title: "发布文章" },
+              { title: `${articleId ? "编辑" : "发布"}文章` },
             ]}
           />
         }
